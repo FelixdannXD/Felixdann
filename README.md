@@ -1,48 +1,48 @@
 # PS4 9.00 Kernel Exploit
 ---
-## Summary
-In this project you will find an implementation that tries to make use of a filesystem bug for the Playstation 4 on firmware 9.00.
-The bug was found while diffing the 9.00 and 9.03 kernels. It will require a drive with a modified exfat filesystem. Successfully triggering it will allow you to run arbitrary code as kernel, to allow jailbreaking and kernel-level modifications to the system. will launch the usual payload launcher (on port 9020).
+## Resumen
+En este proyecto encontrará una implementación que intenta hacer uso de un error del sistema de archivos para Playstation 4 en el firmware 9.00.
+El error se encontró al comparar los kernels 9.00 y 9.03. Requerirá una unidad con un sistema de archivos exfat modificado. Activarlo con éxito le permitirá ejecutar código arbitrario como kernel, para permitir el jailbreak y modificaciones a nivel de kernel en el sistema. lanzará el lanzador de carga útil habitual (en el puerto 9020).
 
-## Patches Included
-The following patches are applied to the kernel:
-1) Allow RWX (read-write-execute) memory mapping (mmap / mprotect)
-2) Syscall instruction allowed anywhere
-3) Dynamic Resolving (`sys_dynlib_dlsym`) allowed from any process
-4) Custom system call #11 (`kexec()`) to execute arbitrary code in kernel mode
-5) Allow unprivileged users to call `setuid(0)` successfully. Works as a status check, doubles as a privilege escalation.
-6) (`sys_dynlib_load_prx`) patch
-7) Disables sysVeri
+## Parches incluidos
+Los siguientes parches se aplican al núcleo:
+1) Permitir mapeo de memoria RWX (lectura-escritura-ejecución) (mmap / mprotect)
+2) Instrucción Syscall permitida en cualquier lugar
+3) Resolución dinámica (`sys_dynlib_dlsym`) permitida desde cualquier proceso
+4) Llamada al sistema personalizada #11 (`kexec()`) para ejecutar código arbitrario en modo kernel
+5) Permita que los usuarios sin privilegios llamen `setuid(0)` con éxito. Funciona como una verificación de estado, se duplica como una escalada de privilegios.
+6) (`sys_dynlib_load_prx`) parche
+7) Deshabilita sysVeri
 
-## Short how-to
-This exploit is unlike previous ones where they were based purely in software. Triggering the vulnerability requires plugging in a specially formatted USB device at just the right time. In the repository you'll find a .img file. You can write this .img to a USB using something like Win32DiskImager.
+## Breve tutorial
+Este exploit es diferente a los anteriores en los que se basaban únicamente en el software. Activar la vulnerabilidad requiere conectar un dispositivo USB con formato especial en el momento justo. En el repositorio encontrarás un archivo .img. Puede escribir este .img en un USB usando algo como Win32DiskImager.
 
-**Note: This will wipe the USB drive, ensure you select the correct drive and that you're OK with that before doing this**
+**Nota: Esto borrará la unidad USB, asegúrese de seleccionar la unidad correcta y de que está de acuerdo con eso antes de hacer esto**
 
 ![](https://i.imgur.com/qpiVQGo.png)
 
-When running the exploit on the PS4, wait until it reaches an alert with "Insert USB now. do not close the dialog until notification pops, remove usb after closing it.". As the dialog states, insert the USB, and wait until the "disk format not supported" notification appears, then close out of the alert with "OK".
+Cuando ejecute el exploit en la PS4, espere hasta que llegue a una alerta con "Insertar USB ahora. No cierre el cuadro de diálogo hasta que aparezca la notificación, retire el usb después de cerrarlo". Como dice el cuadro de diálogo, inserte el USB y espere hasta que aparezca la notificación "formato de disco no compatible", luego cierre la alerta con "Aceptar".
 
-It may take a minute for the exploit to run, and the spinning animation on the page might freeze - this is fine, let it continue until an error shows or it succeeds and displays "Awaiting payload".
+El exploit puede tardar un minuto en ejecutarse, y la animación giratoria en la página puede congelarse; esto está bien, déjelo continuar hasta que aparezca un error o tenga éxito y muestre "Esperando carga útil".
 
-## Extra Notes
-- Unplug the USB before a (re)boot cycle or you'll risk corrupting the kernel heap at boot.
-- The browser might tempt you into closing the page prematurely, don't.
-- The loading circle might freeze while the webkit exploit is triggering, this doesn't yet mean that the exploit failed.
-- The bug predates firmware 1.00, so 1.00-9.00 should be exploitable using the same strategy (you will need a different userland exploit & gadgets).
-- You can replace the loader with a specific payload to load stuff directly instead of doing it through sockets.
-- This bug works on certain PS5 firmwares, however there's no known strategy for exploiting it at the moment. Using this bug against the PS5 blind wouldn't be advised.
-- Please don't open issues to tell me that there are none... nor make attempts at making me do your homework for you.
-- This repository does not provide anything beyond the initial kernel patches that allow you to execute payloads.
-If you encounter issues with certain payloads you should report your issues to the developers of those payloads through whatever means they make available to you.
-- The name of the repository is a fusion of the words 'ps4' and '[OOB](https://cwe.mitre.org/data/definitions/787.html)', the latter being the kind of vulnerability this implementation attempts to exploit, any other interpretation is purely coincidental & unintended.
-- As stated before, this bug was found by diffing the 9.00 and 9.03 kernels, this does imply that the bug was fixed on 9.03.
-## Contributors
+## Notas adicionales
+- Desconecte el USB antes de un ciclo de (re)arranque o correrá el riesgo de corromper el montón del kernel en el arranque.
+- El navegador puede tentarlo a cerrar la página prematuramente, no lo haga.
+- El círculo de carga puede congelarse mientras se activa el exploit webkit, esto no significa que el exploit haya fallado.
+- El error es anterior al firmware 1.00, por lo que 1.00-9.00 debería poder explotarse con la misma estrategia (necesitará un exploit y dispositivos de usuario diferentes).
+- Puede reemplazar el cargador con una carga útil específica para cargar cosas directamente en lugar de hacerlo a través de enchufes.
+- Este error funciona en ciertos firmwares de PS5, sin embargo, no existe una estrategia conocida para explotarlo en este momento. No se recomienda usar este error contra la persiana de PS5.
+- Por favor, no abras temas para decirme que no los hay... ni intentes hacerme hacer la tarea por ti.
+- Este repositorio no proporciona nada más allá de los parches iniciales del kernel que le permiten ejecutar cargas útiles.
+Si encuentra problemas con ciertas cargas útiles, debe informar sus problemas a los desarrolladores de esas cargas útiles a través de cualquier medio que pongan a su disposición.
+- El nombre del repositorio es una fusión de las palabras 'ps4' y '[OOB](https://cwe.mitre.org/data/definitions/787.html)', siendo esta última el tipo de vulnerabilidad que esta implementación intenta explotar, cualquier otra interpretación es pura coincidencia y no intencionada.
+- Como se indicó anteriormente, este error se encontró al comparar los kernels 9.00 y 9.03, lo que implica que el error se solucionó en 9.03.
+## Colaboradores
 
 - laureeeeeee
 - [Specter](https://twitter.com/SpecterDev)
 - [Znullptr](https://twitter.com/Znullptr)
 
-## Special Thanks
+## Agradecimientos especiales
 - [Andy Nguyen](https://twitter.com/theflow0)
 - [sleirsgoevy](https://twitter.com/sleirsgoevy) - [9.00 Webkit exploit](https://github.com/sleirsgoevy/bad_hoist/tree/9.00)
